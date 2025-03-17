@@ -1,0 +1,56 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N = 2e5+7;
+int A[N],tree[N],n,m;
+int bset(int x){
+	return (-x) &x;
+}
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while (ch<'0'||ch>'9'){if (ch=='-') f=-1;ch=getchar();}
+	while (ch>='0'&&ch<='9'){x=x*10+ch-48;ch=getchar();}
+	return x*f;
+}
+void updata(int i,int x){
+	int j=bset(i),ma =x;
+	for(int k=1;k<j;k<<=1){
+		ma = max(ma,tree[i-k]);
+	}
+	tree[i] =ma;
+	while(i<=n){
+		tree[i] = max(ma,tree[i]);
+		i+=bset(i);
+	}
+	return ;
+}
+int chaxun(int l,int r){
+	int k =bset(r-l+1),g = r-l+1,ma =0;
+	while(g>0){
+		for(;g >=bset(r) && g!=0;g-=bset(r),r-=bset(r)){
+			ma = max(ma,tree[r]);
+		}
+		if(g>0){
+			ma = max(ma,A[r]);
+			r--,g--;
+		}
+	}
+	return ma;
+}
+signed main(){
+//	ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
+	n =read(),m=read();
+	for(int i=1;i<=n;i++){
+		cin>>A[i];
+		updata(i,A[i]);
+	}
+//	for(int i=1;i<=n;i++){
+//		cout<<tree[i]<<' ';
+//	}
+	int l,r;
+	while(m--){
+		l=read(),r=read();
+		cout<<chaxun(l,r)<<'\n';
+	}
+	return 0;
+}
